@@ -12,10 +12,10 @@ class App {
     public taskController: TaskController;
 
     /* Swagger files start */
-    private swaggerFile: any = (process.cwd()+"/swagger/swagger.json");
-    private swaggerData: any = fs.readFileSync(this.swaggerFile, 'utf8');
-    private customCss: any = fs.readFileSync((process.cwd()+"/swagger/swagger.css"), 'utf8');
-    private swaggerDocument = JSON.parse(this.swaggerData);
+    // private swaggerFile: any = (process.cwd()+"/swagger/swagger.json");
+    // private swaggerData: any = fs.readFileSync(this.swaggerFile, 'utf8');
+    // private customCss: any = fs.readFileSync((process.cwd()+"/swagger/swagger.css"), 'utf8');
+    // private swaggerDocument = JSON.parse(this.swaggerData);
     /* Swagger files end */
 
 
@@ -31,6 +31,7 @@ class App {
     private middleware(): void {
         this.express.use(bodyParser.json());
         this.express.use(bodyParser.urlencoded({ extended: false }));
+        this.express.use(express.static(path.join(__dirname, './ui/build')));
     }
 
     private routes(): void {
@@ -53,12 +54,11 @@ class App {
         });
 
         this.express.get("/", (req, res, next) => {
-            res.send("Typescript App works!!");
+            res.sendFile(path.join(__dirname, './ui/build/index.html'));
         });
 
         // swagger docs
-        this.express.use('/api/docs', swaggerUi.serve,
-            swaggerUi.setup(this.swaggerDocument, null, null, this.customCss));
+        //this.express.use('/api/docs', swaggerUi.serve, swaggerUi.setup(this.swaggerDocument, null, null, this.customCss));
 
         // handle undefined routes
         this.express.use("*", (req, res, next) => {
